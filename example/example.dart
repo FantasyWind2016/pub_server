@@ -15,7 +15,7 @@ import 'src/examples/cow_repository.dart';
 import 'src/examples/file_repository.dart';
 import 'src/examples/http_proxy_repository.dart';
 
-final Uri pubDartLangOrg = Uri.parse('https://pub.dartlang.org');
+final Uri pubDartLangOrg = Uri.parse('https://pub.flutter-io.cn');
 
 void main(List<String> args) {
   var parser = argsParser();
