@@ -62,12 +62,14 @@ Future<HttpServer> runPubServer(
       '    \$ export PUB_HOSTED_URL=http://$host:$port\n'
       '\n');
 
+  var pipeline = Pipeline();
+  if (qywxkey!=null && qywxkey.isNotEmpty) {
+    pipeline = pipeline.addMiddleware(qywxRobotMiddleware(qywxkey)); // 企业微信机器人中间件  
+  }
+  pipeline = pipeline.addMiddleware(logRequests()); // 日志中间件
   // 启动一个http服务
   return shelf_io.serve(
-      const Pipeline()
-          .addMiddleware(qywxRobotMiddleware(qywxkey))
-          .addMiddleware(logRequests()) // 日志中间件
-          .addHandler(server.requestHandler), // 请求处理器
+      pipeline.addHandler(server.requestHandler), // 请求处理器
       host,
       port);
 }
