@@ -18,6 +18,7 @@ import 'src/examples/http_proxy_repository.dart';
 final Uri pubDartLangOrg = Uri.parse('https://pub.flutter-io.cn');
 
 void main(List<String> args) {
+  // 解析启动参数
   var parser = argsParser();
   var results = parser.parse(args);
 
@@ -32,7 +33,9 @@ void main(List<String> args) {
     exit(1);
   }
 
+  // 设置日志记录器
   setupLogger();
+  // 启动pub服务器
   runPubServer(directory, host, port, standalone);
 }
 
@@ -40,10 +43,15 @@ Future<HttpServer> runPubServer(
     String baseDir, String host, int port, bool standalone) {
   var client = http.Client();
 
+  // 本地文件存储库
   var local = FileRepository(baseDir);
+  // 网络存储库
   var remote = HttpProxyRepository(client, pubDartLangOrg);
+  // 复制和写入存储库
   var cow = CopyAndWriteRepository(local, remote, standalone);
 
+  // 初始化pub服务框架，传入了存储库，但未传入cache对象，所以当前服务框架没有缓存
+  // 但cow存储库中有缓存逻辑。
   var server = ShelfPubServer(cow);
   print('Listening on http://$host:$port\n'
       '\n'
@@ -52,10 +60,11 @@ Future<HttpServer> runPubServer(
       '    \$ export PUB_HOSTED_URL=http://$host:$port\n'
       '\n');
 
+  // 启动一个http服务
   return shelf_io.serve(
       const Pipeline()
-          .addMiddleware(logRequests())
-          .addHandler(server.requestHandler),
+          .addMiddleware(logRequests()) // 日志中间件
+          .addHandler(server.requestHandler), // 请求处理器
       host,
       port);
 }
@@ -63,6 +72,7 @@ Future<HttpServer> runPubServer(
 ArgParser argsParser() {
   var parser = ArgParser();
 
+  // 给参数解析器设置可支持的参数以及默认值
   parser.addOption('directory',
       abbr: 'd', defaultsTo: 'pub_server-repository-data');
 

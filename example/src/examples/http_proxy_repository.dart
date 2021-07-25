@@ -15,6 +15,8 @@ final Logger _logger = Logger('pub_server.http_proxy_repository');
 /// the pub HTTP API.
 ///
 /// This [PackageRepository] does not support uploading so far.
+/// 通过pub的HTTP接口，和远程的HTTP服务器通讯，实现了[PackageRepository]抽象类。
+/// 该类暂不支持上传功能。
 class HttpProxyRepository extends PackageRepository {
   final http.Client client;
   final Uri baseUrl;
@@ -67,6 +69,8 @@ class HttpProxyRepository extends PackageRepository {
   @override
   bool get supportsDownloadUrl => true;
 
+  /// 生成下载链接地址
+  /// 将报名和版本拼接成tar压缩包的文件地址
   @override
   Future<Uri> downloadUrl(String package, String version) async {
     package = Uri.encodeComponent(package);
@@ -74,11 +78,14 @@ class HttpProxyRepository extends PackageRepository {
     return baseUrl.resolve('/packages/$package/versions/$version.tar.gz');
   }
 
+  /// 下载请求处理器
   @override
   Future<Stream<List<int>>> download(String package, String version) async {
     _logger.info('Downloading package $package/$version.');
 
+    // 生成下载链接地址
     var url = await downloadUrl(package, version);
+    // 发送下载http请求，返回值是Stream流，然后直接返回
     var response = await client.send(http.Request('GET', url));
     return response.stream;
   }
