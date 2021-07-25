@@ -1,5 +1,7 @@
 # ARCHIVED
 
+[English](README.md) | [简体中文](README_zh-cn.md)
+
 This repo has been archived, and is no longer maintained.
 
 Issues and PRs will *not* be responded to.
