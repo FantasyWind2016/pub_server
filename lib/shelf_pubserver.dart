@@ -455,7 +455,9 @@ class ShelfPubServer {
       }
       _logger.info('Redirecting to found url.');
       // 返回302：结束简单上传URL
-      return shelf.Response.found(_finishUploadSimpleUrl(uri));
+      return shelf.Response.found(_finishUploadSimpleUrl(uri), context: {
+        'packageVersion': version,
+      });
     } catch (error, stack) {
       _logger.warning('Error occured', error, stack);
       // TODO: Do error checking and return error codes?
@@ -573,6 +575,7 @@ class ShelfPubServer {
 
   /// 完成简单上传URL地址
   /// 这里奇怪的是错误信息竟然要放到302URL里返回？正常应该直接返回吧？还是说mutipart上传的请求无法返回
+  /// 而且这里竟然不知道是哪个package的哪个版本成功了。(捂脸.png)
   Uri _finishUploadSimpleUrl(Uri url, {String error}) {
     var postfix = error == null ? '' : '?error=${Uri.encodeComponent(error)}';
     return url.resolve('/api/packages/versions/newUploadFinish$postfix');

@@ -14,6 +14,7 @@ import 'package:shelf/shelf_io.dart' as shelf_io;
 import 'src/examples/cow_repository.dart';
 import 'src/examples/file_repository.dart';
 import 'src/examples/http_proxy_repository.dart';
+import 'src/middleware/qywx_robot_middleware.dart';
 
 final Uri pubDartLangOrg = Uri.parse('https://pub.flutter-io.cn');
 
@@ -25,6 +26,7 @@ void main(List<String> args) {
   var directory = results['directory'] as String;
   var host = results['host'] as String;
   var port = int.parse(results['port'] as String);
+  var qywxkey = results['qywxkey'] as String;
   var standalone = results['standalone'] as bool;
 
   if (results.rest.isNotEmpty) {
@@ -36,11 +38,11 @@ void main(List<String> args) {
   // 设置日志记录器
   setupLogger();
   // 启动pub服务器
-  runPubServer(directory, host, port, standalone);
+  runPubServer(directory, host, port, qywxkey, standalone);
 }
 
 Future<HttpServer> runPubServer(
-    String baseDir, String host, int port, bool standalone) {
+    String baseDir, String host, int port, String qywxkey, bool standalone) {
   var client = http.Client();
 
   // 本地文件存储库
@@ -63,6 +65,7 @@ Future<HttpServer> runPubServer(
   // 启动一个http服务
   return shelf_io.serve(
       const Pipeline()
+          .addMiddleware(qywxRobotMiddleware(qywxkey))
           .addMiddleware(logRequests()) // 日志中间件
           .addHandler(server.requestHandler), // 请求处理器
       host,
@@ -79,6 +82,7 @@ ArgParser argsParser() {
   parser.addOption('host', abbr: 'h', defaultsTo: 'localhost');
 
   parser.addOption('port', abbr: 'p', defaultsTo: '8080');
+  parser.addOption('qywxkey', abbr: 'q', defaultsTo: '');
   parser.addFlag('standalone', abbr: 's', defaultsTo: false);
   return parser;
 }
