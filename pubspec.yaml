@@ -18,7 +18,7 @@ dependencies:
 dev_dependencies:
   archive:
     git:
-      url: git@github.com:FantasyWind2016/archive.git
+      url: https://github.com/FantasyWind2016/archive.git
       ref: '2.0'
   args: ^1.4.0
   http: ^0.12.0
