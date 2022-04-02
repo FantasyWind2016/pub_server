@@ -81,9 +81,9 @@ ArgParser argsParser() {
   parser.addOption('directory',
       abbr: 'd', defaultsTo: 'pub_server-repository-data');
 
-  parser.addOption('host', abbr: 'h', defaultsTo: 'localhost');
+  parser.addOption('host', abbr: 'h', defaultsTo: '127.0.0.1');
 
-  parser.addOption('port', abbr: 'p', defaultsTo: '8080');
+  parser.addOption('port', abbr: 'p', defaultsTo: '8090');
   parser.addOption('qywxkey', abbr: 'q', defaultsTo: '');
   parser.addFlag('standalone', abbr: 's', defaultsTo: false);
   return parser;
